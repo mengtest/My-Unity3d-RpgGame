@@ -5,14 +5,13 @@ public class player : MonoBehaviour {
     public Transform cplayer;
     public Animator Ani;
     public float speed,Ispeed;
-    public int attack;
     public Vector3 dir;
     public float J_time;
     public float JumpSpeed;
     public int bt;
     private int Attack_status;
     private int Dead_status;
-    public bool isLife;
+    private bool isLife;
 	void Start ()
     {
         speed = 0;
@@ -26,6 +25,7 @@ public class player : MonoBehaviour {
 	// Update is called once per frame
     void Attack_end(int status)
     {
+        Ani.SetBool("isAttack", false);
         Attack_status = status;
     }
     void fs_control()
@@ -60,14 +60,14 @@ public class player : MonoBehaviour {
         {
             if (Attack_status != 1)
             {
-                attack = 1;
+                this.transform.parent.FindChild("Spell").GetComponent<HandAttack>().Work(this.transform);
                 Attack_status = 1;
             }
         }
     }
 	void Update () {
-        attack = 0;
         CharacterController controller = GetComponent<CharacterController>();
+        isLife = this.GetComponent<Self_class>().isLife;
         if (!controller.isGrounded)
         {
             Ispeed = 0;
@@ -94,17 +94,16 @@ public class player : MonoBehaviour {
         else
         {
             Ispeed = 0;
-            attack = 0;
             speed = 0;
             if (Dead_status == 2)
             {
-                Ani.SetInteger("Attack", attack);
+                Ani.SetBool("isAttack", false);
                 Ani.SetFloat("Speed", speed);
                 Ani.SetBool("isLife", isLife);
                 Dead_status = 1;
             }
         }
-        Ani.SetInteger("Attack", attack);
+        //Ani.SetInteger("Attack", a);
         Ani.SetFloat("Speed", speed);
         dir = (cplayer.forward * speed * Ispeed)+ (cplayer.up * JumpSpeed);
         //controller.Move(cplayer.up * JumpSpeed * Time.deltaTime);

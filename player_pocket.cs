@@ -47,9 +47,10 @@ public class player_pocket : MonoBehaviour {
         findadr();
         Canvas_con();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public void drop(int Item_id,int Item_addr)
+    {
+        Item_arr[Item_addr] = 0;
+        Item_count[Item_addr] = 0;
+        Canvas_con();
+    }
 }

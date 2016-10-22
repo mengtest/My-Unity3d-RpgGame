@@ -6,9 +6,27 @@ public class Self_class : MonoBehaviour {
     public int s_id;
     public float s_life;
     public float s_speed;
+    public string s_name;
+    public string s_Icontent;
+    public float s_AttackValue;
+    private float p_life;
+    public bool isLife;
+    public  void injured(float damage)
+    {
+        p_life -= damage;
+    }
+    public float getLife()
+    {
+        return p_life;
+    }
     void Start()
     {
-
+        isLife = true;
+        p_life = s_life;
+    }
+    void Update()
+    {
+        isLife = (p_life > 0 ? true : false);
     }
 }
 /*s_class:

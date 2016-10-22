@@ -7,6 +7,7 @@ public class Pocket : MonoBehaviour {
 
     // Use this for initialization
     public Sprite[] Item_image;
+    public Sprite Empty_image;
     private int[] U_Item_id=new int[20];
     private int[] U_Item_count=new int[20];
     private bool isUpdate;
@@ -20,6 +21,7 @@ public class Pocket : MonoBehaviour {
             this.transform.parent.Find("Pocket").FindChild("tP_" + i.ToString()).gameObject.SetActive(false);
         }
         this.transform.parent.Find("Pocket").gameObject.SetActive(false);
+        this.transform.parent.Find("Pocket").FindChild("Pan_shortcut").gameObject.SetActive(false);
         isOpen = false;
         pretime = 0;
         isUpdate = false;
@@ -30,6 +32,12 @@ public class Pocket : MonoBehaviour {
         {
             for (int j = 0; j < U_Item_count.Length; j++)
             {
+                if (U_Item_count[j] == 0 || U_Item_id[j] == 0)
+                {
+                    this.transform.parent.Find("Pocket").FindChild("P_" + (j + 1).ToString()).GetComponent<Image>().sprite = Empty_image;
+                    this.transform.parent.Find("Pocket").FindChild("tP_" + (j + 1).ToString()).GetComponent<Text>().text = " ";
+                    this.transform.parent.Find("Pocket").FindChild("tP_" + (j + 1).ToString()).gameObject.SetActive(false);
+                }
                 if (U_Item_count[j] > 0)
                 {
                     this.transform.parent.Find("Pocket").FindChild("tP_" + (j+1).ToString()).gameObject.SetActive(true);
@@ -54,6 +62,14 @@ public class Pocket : MonoBehaviour {
             this.Update_canvas();
         }
     }
+    public bool Empty_check(int addr)
+    {
+        return U_Item_count[addr] > 0 ? false : true;
+    }
+    public int Itemid_get(int addr)
+    {
+        return U_Item_id[addr];
+    }
     void Poc_control()
     {
         if (this.gameObject.GetComponent<OnButtonPressed>().Deal == "KeyDown" && Time.time - pretime > delay)
@@ -66,7 +82,11 @@ public class Pocket : MonoBehaviour {
                 this.Update_canvas();
             }
             else
+            {
                 this.transform.parent.Find("Pocket").gameObject.SetActive(false);
+                this.transform.parent.FindChild("Pocket").FindChild("Pan_shortcut").gameObject.SetActive(false);
+            }
+
         }
 
     }
