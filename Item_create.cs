@@ -32,6 +32,8 @@ public class Item_create : MonoBehaviour {
             clone.tag = "Item";
             clone.parent = this.transform;
             clone.gameObject.GetComponent<Self_class>().s_id = rnd;
+            clone.gameObject.GetComponent<Self_class>().s_name = this.transform.FindChild("get_sName").GetComponent<get_sName>().Item_name(rnd);
+            clone.gameObject.GetComponent<Self_class>().s_Icontent = this.transform.FindChild("get_sName").GetComponent<get_sName>().Item_content(rnd);
             cr_time = Time.time;
         }
     }
