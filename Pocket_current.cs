@@ -5,7 +5,7 @@ public class Pocket_current :MonoBehaviour,IPointerDownHandler
 {
     private bool isEmpty;
     private int addr;
-    private int Item_id;
+    private Transform Item;
 	// Use this for initialization
     int getaddr(string str)
     {
@@ -21,11 +21,11 @@ public class Pocket_current :MonoBehaviour,IPointerDownHandler
 	public void OnPointerDown(PointerEventData eventData)
     {
         isEmpty = this.transform.parent.parent.FindChild("B_poc").GetComponent<Pocket>().Empty_check(addr);
-        Item_id = this.transform.parent.parent.FindChild("B_poc").GetComponent<Pocket>().Itemid_get(addr);
+        Item = this.transform.parent.parent.FindChild("B_poc").GetComponent<Pocket>().Item_get(addr);
         if (!isEmpty)
         {
             this.transform.parent.FindChild("Pocket_dashboard").gameObject.SetActive(true);
-            this.transform.parent.FindChild("Pocket_dashboard").GetComponent<Pocket_Dashboard>().work(addr,Item_id);
+            this.transform.parent.FindChild("Pocket_dashboard").GetComponent<Pocket_Dashboard>().work(addr,Item);
         }
     }
 }

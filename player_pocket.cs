@@ -2,55 +2,72 @@
 using System.Collections;
 
 public class player_pocket : MonoBehaviour {
-    private int pocket_adr;
-    private int pick_Iid;
     private bool isCover;
-    public int[] Item_arr=new int[9];
-    public int[] Item_count = new int[9];
+    public Transform[] tItem_temp=new Transform[9];
+    public Transform Model;
 	void Start () {
-        pocket_adr = 0;
         isCover = false;
-	    for(int j = 0; j < 9; j++)
-        {
-            Item_arr[j] = Item_count[j] = 0;
-        }
 	}
-    void findadr()
+    bool findadr(Transform Item_t)
     {
-        this.pocket_adr = 0;
         isCover = false;
-        for(int k = 0; k < Item_arr.Length; k++)
+        for(int k = 0; k < tItem_temp.Length; k++)
         {
-            if (Item_arr[k] == pick_Iid)
+            if (tItem_temp[k] != null)
             {
-                Item_count[k]++;
-                isCover = true;
-            }
+                if (tItem_temp[k].GetComponent<Self_class>().s_id == Item_t.GetComponent<Self_class>().s_id)
+                {
+                    tItem_temp[k].GetComponent<Self_class>().s_iCount++;
+                    Destroy(Item_t.gameObject);
+                    isCover = true;
+                    return true;
+                }
+            }         
         }
         if (!isCover)
         {
-            while (Item_arr[this.pocket_adr] != 0)
+            for (int k = 0; k < tItem_temp.Length; k++)
             {
-                this.pocket_adr++;
+                if (tItem_temp[k] == null)
+                { 
+                    tItem_temp[k] = Item_t;
+                    return true;
+                }
             }
-            Item_arr[this.pocket_adr] = pick_Iid;
-            Item_count[this.pocket_adr]++;
+            return false;
         }
+        return false;
     }
     void Canvas_con()
     {
-        GameObject.Find("Player_CAnvas").transform.FindChild("B_poc").gameObject.GetComponent<Pocket>().Update_canvas(Item_arr, Item_count);
+        GameObject.Find("Player_CAnvas").transform.FindChild("B_poc").gameObject.GetComponent<Pocket>().Update_canvas_con(tItem_temp);
     }
-    public void Pick(int Item_id)
+    public void Pick(Transform Item)
     {
-        pick_Iid = Item_id;
-        findadr();
+        Transform I_temp = (Transform)Instantiate(Model, this.transform.position, this.transform.rotation);
+        I_temp.parent = this.transform;
+        I_temp.GetComponent<Self_class>().s_class = Item.GetComponent<Self_class>().s_class;
+        I_temp.GetComponent<Self_class>().s_Icontent = Item.GetComponent<Self_class>().s_Icontent;
+        I_temp.GetComponent<Self_class>().s_iType = Item.GetComponent<Self_class>().s_iType;
+        I_temp.GetComponent<Self_class>().s_name = Item.GetComponent<Self_class>().s_name;
+        I_temp.GetComponent<Self_class>().s_id = Item.GetComponent<Self_class>().s_id;
+        I_temp.GetComponent<Self_class>().s_iCount = Item.GetComponent<Self_class>().s_iCount;
+        Destroy(Item.gameObject);
+        if (!findadr(I_temp))
+        {
+            Debug.Log("背包已满！");
+        }
         Canvas_con();
     }
-    public void drop(int Item_id,int Item_addr)
+    public void drop(int Item_addr)
     {
-        Item_arr[Item_addr] = 0;
-        Item_count[Item_addr] = 0;
+        Destroy(tItem_temp[Item_addr].gameObject);
+        tItem_temp[Item_addr] = null;
         Canvas_con();
+    }
+    public void use(int Item_addr)
+    {
+        int spell_id = this.transform.parent.FindChild("get_sName").GetComponent<get_sName>().Item_Spell(tItem_temp[Item_addr].GetComponent<Self_class>().s_id);
+        this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(spell_id, this.transform);
     }
 }

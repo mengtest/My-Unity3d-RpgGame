@@ -18,5 +18,9 @@ public class Pocket_dash_current : MonoBehaviour,IPointerClickHandler
         {
             this.transform.parent.GetComponent<Pocket_Dashboard>().shortcut();
         }
+        else if (keyname == "use")
+        {
+            this.transform.parent.GetComponent<Pocket_Dashboard>().use();
+        }
     }
 }

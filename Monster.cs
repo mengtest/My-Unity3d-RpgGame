@@ -46,7 +46,7 @@ public class Monster : MonoBehaviour {
         {
             if (Attack_status != 1)
             {
-                this.transform.parent.FindChild("Spell").GetComponent<HandAttack>().Work(this.transform);
+                this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(101, this.transform);
                 Attack_status = 1;
             }
         }

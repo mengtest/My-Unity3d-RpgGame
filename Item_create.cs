@@ -27,7 +27,7 @@ public class Item_create : MonoBehaviour {
         if (Time.time - cr_time > 4)
         {
             Item_pos_c();
-            int rnd = ((int)Random.Range(0, 4) ) + 20001;
+            int rnd = ((int)Random.Range(6, 8) ) + 20001;
             clone =(Transform)Instantiate(Item, Item_pos, Quaternion.identity);
             clone.tag = "Item";
             clone.parent = this.transform;

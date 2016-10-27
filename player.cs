@@ -12,6 +12,8 @@ public class player : MonoBehaviour {
     private int Attack_status;
     private int Dead_status;
     private bool isLife;
+    public bool isCastingComplete;
+    public int Spell_status;
 	void Start ()
     {
         speed = 0;
@@ -20,13 +22,29 @@ public class player : MonoBehaviour {
         JumpSpeed = 0;
         Attack_status = 2;
         Dead_status = 2;
+        Spell_status = 2;
         isLife = true;
+        isCastingComplete = true;
     }
 	// Update is called once per frame
+    public void player_act_cast(int spell_id)
+    {
+        if (Spell_status != 1)
+        {
+            Spell_status = 1;
+            this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(spell_id, this.transform);
+        }
+
+    }
     void Attack_end(int status)
     {
         Ani.SetBool("isAttack", false);
         Attack_status = status;
+    }
+    void Spell_end(int status)
+    {
+        Ani.SetBool("isSpell_1", false);
+        Spell_status = status;
     }
     void fs_control()
     {
@@ -60,10 +78,29 @@ public class player : MonoBehaviour {
         {
             if (Attack_status != 1)
             {
-                this.transform.parent.FindChild("Spell").GetComponent<HandAttack>().Work(this.transform);
+                this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(101,this.transform);
                 Attack_status = 1;
             }
         }
+    }
+    void sp_control()
+    {
+        //if((Input.GetKey(KeyCode.W)||GameObject.Find("Player_CAnvas").transform.FindChild("B_Up").GetComponent<OnButtonPressed>().Deal == "KeyDown")&& GameObject.Find("Player_CAnvas").transform.FindChild("B_B").GetComponent<OnButtonPressed>().Deal == "KeyDown")
+        //{
+        //    if (isCastingComplete)
+        //    {
+        //        isCastingComplete = false;
+        //        this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(102, this.transform);
+        //    }
+        //}
+        //if ((Input.GetKey(KeyCode.D) || GameObject.Find("Player_CAnvas").transform.FindChild("B_Right").GetComponent<OnButtonPressed>().Deal == "KeyDown") && GameObject.Find("Player_CAnvas").transform.FindChild("B_B").GetComponent<OnButtonPressed>().Deal == "KeyDown")
+        //{
+        //    if (Spell_status!=1)
+        //    {
+        //        Spell_status = 1;
+        //        this.transform.parent.FindChild("Spell").GetComponent<Spell_cast>().casting(103, this.transform);
+        //    }
+        //}
     }
 	void Update () {
         CharacterController controller = GetComponent<CharacterController>();
@@ -73,21 +110,29 @@ public class player : MonoBehaviour {
             Ispeed = 0;
             JumpSpeed -= 98 * Time.deltaTime;
             if (JumpSpeed < 0)
+            {
                 speed = 0;
+            }
             //controller.Move(Vector3.down * JumpSpeed*Time.deltaTime);
             //Ani.SetFloat("Speed", speed);
         }
         else
         {
             JumpSpeed = 0;
+            if (this.transform.FindChild("ejector"))
+            {
+                GameObject.Destroy(this.transform.FindChild("ejector").gameObject);
+                this.transform.GetComponent<Self_class>().s_speed = 5;
+            }
         }
         if (isLife)
         {
             fs_control();
+            sp_control();
             if ((Input.GetKey(KeyCode.Space) || GameObject.Find("B_O").GetComponent<OnButtonPressed>().Deal == "KeyDown") && controller.isGrounded)         //Junp
             {
                 speed = 2;
-                JumpSpeed = 40;
+                JumpSpeed = 20;
                 Ani.SetFloat("Speed", speed);
             }
         }
@@ -108,5 +153,11 @@ public class player : MonoBehaviour {
         dir = (cplayer.forward * speed * Ispeed)+ (cplayer.up * JumpSpeed);
         //controller.Move(cplayer.up * JumpSpeed * Time.deltaTime);
         controller.Move(dir* Time.deltaTime);
+    }
+    public void Move()
+    {
+        CharacterController controller = GetComponent<CharacterController>();
+        dir = (cplayer.forward * speed * Ispeed) + (cplayer.up * JumpSpeed);
+        controller.Move(dir * Time.deltaTime);
     }
 }
